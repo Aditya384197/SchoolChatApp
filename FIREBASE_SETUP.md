@@ -21,16 +21,8 @@ Database → Rules में `database.rules.json` की सामग्री 
 
 अगर फिर भी मैन्युअली किसी को एडमिन बनाना हो (जैसे adminCode भूल जाने पर), तब भी कंसोल से सीधे `config/adminUid` में उसका UID डाला जा सकता है — पर सामान्य इस्तेमाल में यह ज़रूरी नहीं।
 
-## 3. Firebase Web configuration — यह सबसे ज़रूरी स्टेप है
-**अगर यह स्टेप छूट गया, तो APK इंस्टॉल तो हो जाएगा पर खोलते ही खाली/सफ़ेद स्क्रीन दिखाएगा (ऐप "खुलेगा नहीं")।**
-
-1. Firebase console → ⚙️ Project settings → General → नीचे "Your apps" में अपना Web app खोलें (न हो तो "</> Add app" से एक Web app बना लें)।
-2. वहाँ मिलने वाले `firebaseConfig` में से तीन वैल्यू कॉपी करें: `apiKey`, `messagingSenderId`, `appId`।
-3. GitHub पर अपनी repo → **Settings → Secrets and variables → Actions → New repository secret** — तीन secrets बनाएं (नाम बिल्कुल यही रखें):
-   - `FIREBASE_API_KEY`
-   - `FIREBASE_MESSAGING_SENDER_ID`
-   - `FIREBASE_APP_ID`
-4. अब वर्कफ़्लो को फिर से चलाएं। यह fix के बाद अब एक "Check Firebase secrets are set" स्टेप है जो इनमें से कोई भी खाली होने पर बिल्ड को तुरंत साफ़ एरर के साथ रोक देगा — इससे पहले जैसा "बिल्ड तो पास पर ऐप नहीं खुलता" वाला चुपचाप-टूटना अब नहीं होगा।
+## 3. Firebase Web configuration
+`apiKey`, `messagingSenderId` और `appId` अब सीधे `src/firebase.js` में लिखे हुए हैं (आपके Firebase console की "Your apps" स्क्रीन से लिए गए वही असली वैल्यू)। GitHub secrets बनाने या `.env` की ज़रूरत अब नहीं है — Firebase का web `apiKey` वैसे भी गुप्त रखने वाली चीज़ नहीं है (Google खुद यही कहता है); असली सुरक्षा Authentication + `database.rules.json` से आती है, apiKey छुपाने से नहीं। अगर कभी Firebase प्रोजेक्ट बदलें या नया web app जोड़ें, तो बस `src/firebase.js` में `firebaseConfig` अपडेट कर दें।
 
 ## 4. Android notifications
 Capacitor Local Notifications plugin Android पर permission संभालता है। Android 13+ पर notification permission माँगी जाती है।
